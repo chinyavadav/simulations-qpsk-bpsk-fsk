@@ -53,7 +53,32 @@ class BaseClass:
         myplot[3].set_title("Frequency domain")
 
         plot.tight_layout()
+        plot.savefig(self.file)
         plot.show()
+
+
+class Ask(BaseClass):
+    def __init__(self, freq=10):
+        super().__init__("ask", freq)
+        self.data = np.array([1, 0, 1, 1, 0, 1])  # <- Input bit rate
+        self.samples_per_bit = 2*self.Fs/self.data.size
+        self.dd = np.repeat(self.data, self.samples_per_bit)
+        self.carrier = np.sin(2 * np.pi * self.freq * self.t)
+        self.modulated = self.dd*self.carrier
+        super().calculate_signal_properties(self.modulated)
+        super().plot(self.carrier, self.modulated, self.data)
+
+
+class Fsk(BaseClass):
+    def __init__(self, freq=10):
+        super().__init__("fsk", freq)
+        self.data = np.array([5, 5, -5, 5, -5, -5])
+        self.samples_per_bit = 2*self.Fs/self.data.size
+        self.dd = np.repeat(self.data, self.samples_per_bit)
+        self.carrier = np.sin(2 * np.pi * self.freq * self.t)
+        self.modulated = np.sin(2 * np.pi * (self.freq + self.dd) * self.t)
+        super().calculate_signal_properties(self.modulated)
+        super().plot(self.carrier, self.modulated, self.data)
 
 
 class Psk(BaseClass):
@@ -70,4 +95,4 @@ class Psk(BaseClass):
 
 
 if __name__ == "__main__":
-    P = Psk(float(10))
+    F = Fsk(float(10))
